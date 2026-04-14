@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casa Segura - Sistema Integrado</title>
+    <style>
+        /* ================= ESTILOS GERAIS ================= */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 20px;
+            padding-bottom: 40px;
+        }
+
+        /* ================= BARRA DE NAVEGAÇÃO ================= */
+        .top-nav {
+            background-color: #2c3e50;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .top-nav button {
+            background-color: transparent;
+            color: white;
+            border: 2px solid #2ecc71;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .top-nav button:hover, .top-nav button.active {
+            background-color: #2ecc71;
+            color: #1a252f;
+        }
+
+        /* ================= TELA DA LOJA ================= */
+        header {
+            background-color: #1a252f;
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            border-bottom: 4px solid #2ecc71;
+        }
+        header h1 { margin: 0; font-size: 2.5em; }
+        header p { margin: 5px 0 0 0; color: #bdc3c7; }
+        
+        .produtos-grid {
+            display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-between;
+        }
+        /* Ajustado de 31% para 23% para caber os 4 produtos certinhos lado a lado */
+        .card-produto {
+            background-color: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 23%; min-width: 200px; padding: 20px; text-align: center; box-sizing: border-box; border: 2px solid transparent;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .card-produto:hover { border: 2px solid #2ecc71; }
+        .preco { font-size: 1.5em; color: #27ae60; font-weight: bold; margin: 10px 0; }
+        .btn-comprar {
+            background-color: #2ecc71; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px;
+        }
+
+        .agendamento {
+            background-color: white; padding: 30px; margin-top: 40px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-left: 5px solid #1a252f;
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+        }
+        .btn-agendar {
+            background-color: #1a252f; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 1.1em;
+        }
+
+        /* ================= TELA DO ADMIN ================= */
+        #admin-login, #admin-dashboard { display: none; }
+        
+        /* Tela de Login */
+        .login-box {
+            background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-align: center; width: 100%; max-width: 350px; margin: 100px auto;
+        }
+        .login-box input { width: 100%; padding: 12px; margin: 10px 0 20px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .login-box button { width: 100%; background-color: #2ecc71; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+        table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; margin-top: 20px; margin-bottom: 40px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #1a252f; color: white; }
+        .status-novo { background-color: #e74c3c; color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.9em; }
+        .btn-whats { background-color: #25D366; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+        /* MÓDULO CRM */
+        .crm-container { display: flex; gap: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-left: 5px solid #2980b9; margin-bottom: 40px; }
+        .crm-form { flex: 1; }
+        .crm-results { flex: 1; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e0e0e0; max-height: 300px; overflow-y: auto; }
+        .crm-form input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .crm-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+        .crm-buttons button { flex: 1 1 45%; padding: 10px; border-radius: 4px; border: none; color: white; cursor: pointer; font-weight: bold; }
+        .btn-add { background: #2980b9; } .btn-add:hover { background: #2471a3; }
+        .btn-alerts { background: #f39c12; } .btn-alerts:hover { background: #d68910; }
+        .btn-list { background: #2ecc71; } .btn-list:hover { background: #27ae60; }
+        .btn-reset { background: #e74c3c; flex: 1 1 100% !important; } .btn-reset:hover { background: #c0392b; }
+        .alerta { background: #fdf2e9; color: #d35400; padding: 10px; margin-bottom: 10px; border-left: 4px solid #e67e22; border-radius: 4px; }
+        .item { background: #eaf2f8; color: #21618c; padding: 10px; margin-bottom: 10px; border-left: 4px solid #3498db; border-radius: 4px; }
+
+        /* ================= MÓDULO SIMULADOR (ISOLADO E COMBINADO) ================= */
+        .simuladores-wrapper {
+            background: #1a252f; padding: 30px; border-radius: 8px; box-shadow: inset 0 4px 15px rgba(0,0,0,0.5); border-top: 5px solid #8e44ad;
+            color: white;
+        }
+
+        /* Layout em Grid/Flex para os simuladores */
+        .sim-row { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; margin-bottom: 30px; }
+        
+        /* Estilos Base dos Containers dos Simuladores */
+        .sim-box { background: #1e293b; padding: 20px; border-radius: 16px; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .sim-box h3 { margin-top: 0; color: #cbd5e1; font-size: 1.2em; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 15px; }
+
+        /* 1. SENSOR DE MOVIMENTO */
+        .sim-sensor-container { width: 300px; }
+        #sim-sensor-status { margin-bottom: 15px; font-size: 16px; font-weight: bold; }
+        .sim-sensor-area { position: relative; width: 100%; height: 180px; border-radius: 12px; background: #020617; overflow: hidden; cursor: pointer; }
+        .sim-sensor-radar { position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: conic-gradient(rgba(34,197,94,0.6) 0deg, rgba(34,197,94,0.2) 60deg, transparent 120deg); animation: sim-girar 3s linear infinite; }
+        @keyframes sim-girar { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+        .sim-sensor-centro { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 60px; height: 60px; border-radius: 50%; background: #1e293b; border: 2px solid #22c55e; }
+        .sim-sensor-detectado { background: #22c55e !important; box-shadow: 0 0 20px #22c55e; }
+        .sim-sensor-luz { margin-top: 15px; padding: 12px; border-radius: 10px; background: #111827; }
+        .sim-sensor-ligada { background: #facc15; color: black; font-weight: bold; box-shadow: 0 0 20px #facc15; }
+
+        /* 2. FECHADURA DIGITAL */
+        .sim-lock-container { width: 260px; }
+        .sim-lock-input { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: none; background: #334155; color: white; text-align: center; font-size: 18px; box-sizing: border-box; }
+        .sim-lock-row { display: flex; justify-content: center; gap: 5px; margin-bottom: 5px; }
+        .sim-lock-btn { width: 50px; height: 50px; border: none; border-radius: 8px; background: #2563eb; color: white; font-size: 16px; cursor: pointer; font-weight: bold; }
+        .sim-lock-btn:hover { background: #1d4ed8; }
+        .sim-lock-btn-acao { background: #475569; width: 100%; padding: 8px; border: none; border-radius: 5px; color: white; cursor: pointer; margin-top: 5px; font-size: 13px; }
+        .sim-lock-btn-acao:hover { background: #334155; }
+        #sim-lock-status { margin-top: 10px; font-weight: bold; min-height: 20px; }
+        .sim-lock-hint { font-size: 12px; opacity: .8; margin: 5px 0 0 0; min-height: 15px; }
+
+        /* 3. OLHO MÁGICO */
+        .sim-olho-container { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; background: #1e293b; padding: 20px; border-radius: 16px; box-shadow: 0 0 20px rgba(0,0,0,0.5); width: 100%; max-width: 600px; margin: 0 auto; }
+        .sim-olho-bloco { display: flex; flex-direction: column; align-items: center; width: 220px; }
+        .sim-olho-bloco h4 { margin: 0 0 5px 0; color: #cbd5e1; }
+        .sim-olho-bloco p { font-size: 12px; color: #94a3b8; margin: 0 0 10px 0; }
+        .sim-olho-porta { width: 220px; height: 350px; background: linear-gradient(145deg,#78350f,#5b2c06); border-radius: 12px; position: relative; }
+        .sim-olho-macaneta { position: absolute; right: 20px; top: 60%; width: 16px; height: 16px; background: #facc15; border-radius: 50%; box-shadow: inset -2px -2px 4px rgba(0,0,0,0.5); }
+        .sim-olho-camera { width: 50px; height: 50px; background: #020617; border-radius: 50%; border: 3px solid #64748b; position: absolute; right: -25px; top: 30%; display: flex; justify-content: center; align-items: center; z-index: 2; }
+        .sim-olho-lente { width: 20px; height: 20px; border-radius: 50%; background: radial-gradient(circle,#22c55e,#020617); }
+        .sim-olho-visor { position: absolute; top: 30%; left: 50%; transform: translateX(-50%); width: 160px; height: 110px; border-radius: 8px; overflow: hidden; border: 3px solid #334155; background: black; }
+        .sim-olho-video { width: 100%; height: 100%; background: url('https://i.pinimg.com/736x/f5/e0/76/f5e0761e0168a20b432e592790bee08d.jpg') center/cover; transform: scale(1.2); filter: brightness(0.7) contrast(1.3) saturate(1.2); transition: 0.3s; }
+        .sim-olho-ativo .sim-olho-video { transform: scale(1.3); filter: brightness(1) contrast(1.4) saturate(1.3); }
+        .sim-olho-visor::after { content: ''; position: absolute; inset: 0; border-radius: 8px; box-shadow: inset 0 0 25px rgba(0,0,0,0.8); }
+        .sim-olho-overlay { position: absolute; bottom: 0; width: 100%; text-align: center; font-size: 11px; background: rgba(0,0,0,0.7); padding: 4px 0; z-index: 2; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <button id="btn-loja" class="active" onclick="mostrarTela('loja')">Visão Cliente (E-commerce)</button>
+        <button id="btn-admin" onclick="acessarAdmin()">Visão Seu Marcos (Sistema Admin)</button>
+    </div>
+
+    <div id="tela-loja">
+        <header>
+            <h1>Casa Segura</h1>
+            <p>A força da tradição com a inteligência do futuro.</p>
+        </header>
+
+        <div class="container">
+            <div class="produtos-grid">
+                
+                <div class="card-produto">
+                    <div>
+                        <h3>Sensor de Movimento Pro</h3>
+                        <p>Detecta presença e acende luzes automaticamente. Ideal para segurança e automação.</p>
+                    </div>
+                    <div>
+                        <p class="preco">R$ 180,00</p>
+                        <button class="btn-comprar" onclick="focarNoFormulario('Sensor de Movimento Pro', 'produto')">Comprar Produto</button>
+                    </div>
+                </div>
+
+                <div class="card-produto">
+                    <div>
+                        <h3>Fechadura Digital</h3>
+                        <p>Acesso via senha com bloqueio inteligente. Dispensa totalmente o uso de chaves.</p>
+                    </div>
+                    <div>
+                        <p class="preco">R$ 850,00</p>
+                        <button class="btn-comprar" onclick="focarNoFormulario('Instalação de Fechadura Digital', 'servico')">Comprar com Instalação</button>
+                    </div>
+                </div>
+
+                <div class="card-produto">
+                    <div>
+                        <h3>Olho Mágico Digital</h3>
+                        <p>Câmera de segurança integrada à porta para ver com clareza quem está do lado de fora.</p>
+                    </div>
+                    <div>
+                        <p class="preco">R$ 350,00</p>
+                        <button class="btn-comprar" onclick="focarNoFormulario('Olho Mágico Digital', 'produto')">Comprar Produto</button>
+                    </div>
+                </div>
+
+                <div class="card-produto">
+                    <div>
+                        <h3>Plano de Manutenção</h3>
+                        <p>Lubrificação física + Atualização de cibersegurança e software dos seus aparelhos.</p>
+                    </div>
+                    <div>
+                        <p class="preco">R$ 150,00<span style="font-size: 0.6em">/ano</span></p>
+                        <button class="btn-comprar" onclick="focarNoFormulario('Assinatura do Plano de Manutenção Anual', 'servico')">Assinar Plano</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="agendamento" id="area-agendamento">
+                <h2>Solicite seu Atendimento ou Produto</h2>
+                <form id="form-pedido" onsubmit="enviarPedido(event)">
+                    <div class="form-group">
+                        <label>Nome do Cliente:</label>
+                        <input type="text" id="cli-nome" required placeholder="Ex: Lucas Silva">
+                    </div>
+                    <div class="form-group">
+                        <label>WhatsApp:</label>
+                        <input type="text" id="cli-whats" required placeholder="(00) 90000-0000">
+                    </div>
+                    <div class="form-group">
+                        <label>O que você deseja?</label>
+                        <input type="text" id="cli-servico" required placeholder="Digite o serviço ou escolha um acima">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Tipo de Pedido:</label>
+                        <select id="cli-tipo" onchange="verificarRetirada()">
+                            <option value="servico">Quero o Serviço / Instalação Completa</option>
+                            <option value="produto">Quero comprar apenas o Produto</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="area-retirada" style="display: none; background: #eaf2f8; padding: 15px; border-radius: 5px; border-left: 4px solid #3498db;">
+                        <label style="color: #2980b9;">Como deseja receber seu produto?</label>
+                        <select id="cli-retirada">
+                            <option value="Retirar na loja">🚶‍♂️ Vou retirar pessoalmente na loja do Seu Marcos</option>
+                            <option value="Entregar no endereço">🚚 Quero que entregue no meu endereço</option>
+                            <option value="Entregar com instalação">🛠️ Quero que entregue junto com a instalação do produto</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-agendar">Enviar Pedido para o Seu Marcos</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-login">
+        <div class="login-box">
+            <h2>Gestão Casa Segura</h2>
+            <p>Acesso exclusivo do Seu Marcos</p>
+            <input type="password" id="senha" placeholder="Senha: admin123">
+            <button onclick="fazerLogin()">Acessar Sistema Integrado</button>
+        </div>
+    </div>
+
+    <div id="admin-dashboard" class="container">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+            <h2>Painel de Controle - Seu Marcos</h2>
+            <button onclick="sairDoSistema()" style="background: #e74c3c; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">Sair do Sistema</button>
+        </div>
+
+        <h3>1. Novos Pedidos (Vindos do Site)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>WhatsApp</th>
+                    <th>Serviço/Produto</th>
+                    <th>Status</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-pedidos">
+            </tbody>
+        </table>
+
+        <h3>2. Gestão de Manutenção Anual (O Antigo Caderno)</h3>
+        <p style="color: #555;">Agende a próxima revisão física e atualização de cibersegurança dos seus clientes.</p>
+        <div class="crm-container">
+            <div class="crm-form">
+                <input type="text" id="manut-nome" placeholder="Nome do Cliente">
+                <input type="text" id="manut-equipamento" placeholder="Equipamento Instalado (Ex: Fechadura Biometrica)">
+                <input type="date" id="manut-data" title="Data da Instalação">
+
+                <div class="crm-buttons">
+                    <button class="btn-add" onclick="adicionarCliente()">➕ Cadastrar</button>
+                    <button class="btn-alerts" onclick="verAlertas()">🔔 Ver Alertas</button>
+                    <button class="btn-list" onclick="verInstalacoes()">📋 Ver Instalações</button>
+                    <button class="btn-reset" onclick="limparDados()">⚠️ Resetar Sistema</button>
+                </div>
+            </div>
+
+            <div class="crm-results" id="manut-resultado">
+                <p style="color: #7f8c8d; text-align: center; margin-top: 20px;">Utilize os botões ao lado para visualizar os dados aqui.</p>
+            </div>
+        </div>
+
+        <h3>3. Simulador de Equipamentos IoT</h3>
+        <p style="color: #555;">Laboratório do Seu Marcos para testar o funcionamento e mostrar aos clientes.</p>
+        
+        <div class="simuladores-wrapper">
+            
+            <div class="sim-row">
+                <div class="sim-box sim-sensor-container">
+                    <h3>📡 Sensor de Movimento Pro</h3>
+                    <div id="sim-sensor-status">Sem movimento</div>
+                    <div class="sim-sensor-area" id="sim-sensor-area">
+                        <div class="sim-sensor-radar"></div>
+                        <div class="sim-sensor-centro"></div>
+                    </div>
+                    <div id="sim-sensor-luz" class="sim-sensor-luz">💡 Luz Desligada</div>
+                </div>
+
+                <div class="sim-box sim-lock-container">
+                    <h3>🔒 Fechadura Digital</h3>
+                    <input id="sim-lock-display" class="sim-lock-input" disabled>
+                    
+                    <div class="sim-lock-row">
+                        <button class="sim-lock-btn" onclick="addFechadura('1')">1</button>
+                        <button class="sim-lock-btn" onclick="addFechadura('2')">2</button>
+                        <button class="sim-lock-btn" onclick="addFechadura('3')">3</button>
+                    </div>
+                    <div class="sim-lock-row">
+                        <button class="sim-lock-btn" onclick="addFechadura('4')">4</button>
+                        <button class="sim-lock-btn" onclick="addFechadura('5')">5</button>
+                        <button class="sim-lock-btn" onclick="addFechadura('6')">6</button>
+                    </div>
+                    <div class="sim-lock-row">
+                        <button class="sim-lock-btn" onclick="addFechadura('7')">7</button>
+                        <button class="sim-lock-btn" onclick="addFechadura('8')">8</button>
+                        <button class="sim-lock-btn" onclick="addFechadura('9')">9</button>
+                    </div>
+                    <div class="sim-lock-row">
+                        <button class="sim-lock-btn" style="background:#e74c3c;" onclick="limparFechadura()">C</button>
+                        <button class="sim-lock-btn" onclick="addFechadura('0')">0</button>
+                        <button class="sim-lock-btn" style="background:#22c55e;" onclick="verificarFechadura()">✔</button>
+                    </div>
+                    
+                    <button class="sim-lock-btn-acao" onclick="modoTrocaFechadura()">Trocar Senha (Padrão: 1234)</button>
+                    <button class="sim-lock-btn-acao" onclick="cancelarTrocaFechadura()">Cancelar Operação</button>
+                    
+                    <div id="sim-lock-status"></div>
+                    <p class="sim-lock-hint" id="sim-lock-hint"></p>
+                </div>
+            </div>
+
+            <div class="sim-olho-container">
+                <div class="sim-olho-bloco">
+                    <h4>Lado de Fora</h4>
+                    <p>Passe o mouse na porta para simular</p>
+                    <div class="sim-olho-porta" id="sim-olho-fora">
+                        <div class="sim-olho-camera">
+                            <div class="sim-olho-lente"></div>
+                        </div>
+                        <div class="sim-olho-macaneta"></div>
+                    </div>
+                </div>
+
+                <div class="sim-olho-bloco">
+                    <h4>Lado de Dentro</h4>
+                    <p style="opacity: 0;">.</p>
+                    <div class="sim-olho-porta">
+                        <div class="sim-olho-visor" id="sim-olho-visor">
+                            <div class="sim-olho-video"></div>
+                            <div class="sim-olho-overlay">Aguardando...</div>
+                        </div>
+                        <div class="sim-olho-macaneta"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <br><br>
+    </div>
+
+    <script>
+        // ================= SISTEMA DE LOGIN E NAVEGAÇÃO =================
+        let adminLogado = false;
+
+        function mostrarTela(tela) {
+            document.getElementById('tela-loja').style.display = 'none';
+            document.getElementById('admin-login').style.display = 'none';
+            document.getElementById('admin-dashboard').style.display = 'none';
+            document.getElementById('btn-loja').classList.remove('active');
+            document.getElementById('btn-admin').classList.remove('active');
+
+            if(tela === 'loja') {
+                document.getElementById('tela-loja').style.display = 'block';
+                document.getElementById('btn-loja').classList.add('active');
+            } else if (tela === 'login') {
+                document.getElementById('admin-login').style.display = 'block';
+                document.getElementById('btn-admin').classList.add('active');
+            } else if (tela === 'dashboard') {
+                document.getElementById('admin-dashboard').style.display = 'block';
+                document.getElementById('btn-admin').classList.add('active');
+                verInstalacoes();
+            }
+        }
+
+        function acessarAdmin() {
+            if (adminLogado) { mostrarTela('dashboard'); } 
+            else { mostrarTela('login'); }
+        }
+
+        function fazerLogin() {
+            if(document.getElementById('senha').value === 'admin123') {
+                adminLogado = true;
+                document.getElementById('senha').value = ''; 
+                mostrarTela('dashboard');
+            } else { alert('Senha incorreta! (Dica: admin123)'); }
+        }
+
+        function sairDoSistema() {
+            adminLogado = false;
+            alert('Você saiu do sistema com segurança.');
+            mostrarTela('loja');
+        }
+
+        // ================= E-COMMERCE E AGENDAMENTO =================
+        function verificarRetirada() {
+            let tipo = document.getElementById('cli-tipo').value;
+            if (tipo === 'produto') { document.getElementById('area-retirada').style.display = 'block'; } 
+            else { document.getElementById('area-retirada').style.display = 'none'; }
+        }
+
+        function focarNoFormulario(servico, tipo = 'servico') {
+            document.getElementById('cli-servico').value = servico;
+            document.getElementById('cli-tipo').value = tipo;
+            verificarRetirada();
+            document.getElementById('cli-nome').focus();
+        }
+
+        function enviarPedido(event) {
+            event.preventDefault(); 
+            let nome = document.getElementById('cli-nome').value;
+            let whats = document.getElementById('cli-whats').value;
+            let servico = document.getElementById('cli-servico').value;
+            let tipo = document.getElementById('cli-tipo').value;
+            
+            let detalhesPedido = servico;
+            if (tipo === 'produto') {
+                let retirada = document.getElementById('cli-retirada').value;
+                detalhesPedido += `<br><small style="color: #e67e22; font-weight: bold;">(Produto: ${retirada})</small>`;
+            } else {
+                detalhesPedido += `<br><small style="color: #2980b9; font-weight: bold;">(Instalação Completa)</small>`;
+            }
+
+            let novaLinha = `
+                <tr>
+                    <td><b>${nome}</b></td><td>${whats}</td><td>${detalhesPedido}</td>
+                    <td><span class="status-novo">NOVO!</span></td>
+                    <td><button class="btn-whats" onclick="alert('Iniciando conversa com ${nome}...')">Chamar no Whats</button></td>
+                </tr>
+            `;
+            
+            let corpoTabela = document.getElementById('tabela-pedidos');
+            corpoTabela.innerHTML = novaLinha + corpoTabela.innerHTML;
+            
+            document.getElementById('form-pedido').reset();
+            verificarRetirada(); 
+            alert('Pedido enviado com sucesso! O Seu Marcos entrará em contato em breve.');
+        }
+
+        // ================= CRM / MANUTENÇÃO (O CADERNO DIGITAL) =================
+        function carregarClientes() { try { return JSON.parse(localStorage.getItem('clientes')) || []; } catch { return []; } }
+        let clientes = carregarClientes();
+        function salvarDados() { localStorage.setItem('clientes', JSON.stringify(clientes)); }
+
+        function adicionarCliente() {
+            const nome = document.getElementById('manut-nome').value;
+            const equipamento = document.getElementById('manut-equipamento').value;
+            const data = document.getElementById('manut-data').value;
+            if (!nome || !equipamento || !data) { alert('Preencha todos os campos da manutenção!'); return; }
+            const dataUltima = new Date(data + 'T00:00:00');
+            const dataProxima = new Date(dataUltima);
+            dataProxima.setFullYear(dataProxima.getFullYear() + 1);
+            clientes.push({ nome, equipamento, proxima: dataProxima.toISOString() });
+            salvarDados();
+            document.getElementById('manut-resultado').innerHTML = `<h4 style="color: #27ae60;">✅ ${nome} cadastrado!</h4><p>Próxima manutenção prevista para: <b>${dataProxima.toLocaleDateString()}</b></p>`;
+            document.getElementById('manut-nome').value = ''; document.getElementById('manut-equipamento').value = ''; document.getElementById('manut-data').value = '';
+        }
+
+        function verAlertas() {
+            clientes = carregarClientes();
+            let html = '<h3 style="margin-top:0;">Próximas 5 Manutenções:</h3>';
+            if (clientes.length === 0) { html += '<p>Nenhum equipamento cadastrado no momento.</p>'; } 
+            else {
+                const ordenados = [...clientes].sort((a, b) => new Date(a.proxima) - new Date(b.proxima));
+                ordenados.slice(0, 5).forEach(c => { html += `<div class="alerta"><b>🔔 ${c.nome}</b><br>🛠️ ${c.equipamento}<br>⏰ Vence em: ${new Date(c.proxima).toLocaleDateString()}</div>`; });
+            }
+            document.getElementById('manut-resultado').innerHTML = html;
+        }
+
+        function verInstalacoes() {
+            clientes = carregarClientes();
+            let html = '<h3 style="margin-top:0;">Todas as Instalações:</h3>';
+            if (clientes.length === 0) { html += '<p>O seu caderno digital está vazio. Adicione um cliente ao lado.</p>'; } 
+            else { clientes.forEach(c => { html += `<div class="item"><b>📋 ${c.nome}</b><br>🛠️ ${c.equipamento}<br>📅 Próxima revisão: ${new Date(c.proxima).toLocaleDateString()}</div>`; }); }
+            document.getElementById('manut-resultado').innerHTML = html;
+        }
+
+        function limparDados() {
+            if (confirm('Tem certeza que deseja RESETAR todo o histórico de manutenções do Seu Marcos?')) {
+                localStorage.clear(); clientes = [];
+                document.getElementById('manut-resultado').innerHTML = '<p style="color: #e74c3c;">✅ Sistema de manutenções totalmente limpo.</p>';
+            }
+        }
+
+        // ================= SCRIPTS DOS SIMULADORES =================
+
+        // --- 1. SENSOR DE MOVIMENTO ---
+        const simSensorArea = document.getElementById('sim-sensor-area');
+        const simSensorStatus = document.getElementById('sim-sensor-status');
+        const simSensorLuz = document.getElementById('sim-sensor-luz');
+        let timeoutSensor;
+
+        simSensorArea.addEventListener('mousemove', () => {
+            simSensorStatus.innerText = "🔔 Movimento detectado!";
+            simSensorStatus.style.color = "#22c55e";
+            simSensorArea.classList.add('sim-sensor-detectado');
+            simSensorLuz.innerText = "💡 Luz Ligada";
+            simSensorLuz.classList.add('sim-sensor-ligada');
+            clearTimeout(timeoutSensor);
+            timeoutSensor = setTimeout(() => {
+                simSensorStatus.innerText = "Sem movimento";
+                simSensorStatus.style.color = "white";
+                simSensorArea.classList.remove('sim-sensor-detectado');
+                simSensorLuz.innerText = "💡 Luz Desligada";
+                simSensorLuz.classList.remove('sim-sensor-ligada');
+            }, 2500);
+        });
+
+        // --- 2. FECHADURA DIGITAL ---
+        let simSenhaFechadura = localStorage.getItem('sim_senha_fechadura') || '1234';
+        let simEntradaFechadura = '';
+        let simEstadoTroca = 'off';
+        const simDisplayLock = document.getElementById('sim-lock-display');
+        const simStatusLock = document.getElementById('sim-lock-status');
+        const simHintLock = document.getElementById('sim-lock-hint');
+
+        function salvarSenhaFechadura(){ localStorage.setItem('sim_senha_fechadura', simSenhaFechadura); }
+
+        function addFechadura(n){
+            if(simEntradaFechadura.length >= 6) return;
+            simEntradaFechadura += n;
+            simDisplayLock.value = simEntradaFechadura;
+        }
+
+        function limparFechadura(){
+            simEntradaFechadura = '';
+            simDisplayLock.value = '';
+        }
+
+        function verificarFechadura(){
+            if(simEstadoTroca === 'verificar_antiga'){
+                if(simEntradaFechadura === simSenhaFechadura){
+                    simEstadoTroca = 'nova_senha';
+                    simStatusLock.innerHTML = '<span style="color:#facc15">🔑 Senha atual correta</span>';
+                    simHintLock.textContent = 'Digite a NOVA senha e pressione ✔';
+                } else { simStatusLock.innerHTML = '<span style="color:#ef4444">❌ Senha atual incorreta</span>'; }
+                limparFechadura(); return;
+            }
+
+            if(simEstadoTroca === 'nova_senha'){
+                if(simEntradaFechadura.length < 4){
+                    simStatusLock.innerHTML = '<span style="color:#facc15">⚠️ Use pelo menos 4 dígitos</span>';
+                    limparFechadura(); return;
+                }
+                simSenhaFechadura = simEntradaFechadura;
+                salvarSenhaFechadura();
+                simStatusLock.innerHTML = '<span style="color:#22c55e">✅ Senha alterada!</span>';
+                simHintLock.textContent = '';
+                simEstadoTroca = 'off';
+                limparFechadura(); return;
+            }
+
+            if(simEntradaFechadura === simSenhaFechadura){ simStatusLock.innerHTML = '<span style="color:#22c55e">🔓 Acesso Liberado</span>'; } 
+            else { simStatusLock.innerHTML = '<span style="color:#ef4444">❌ Senha Incorreta</span>'; }
+            limparFechadura();
+        }
+
+        function modoTrocaFechadura(){
+            simEstadoTroca = 'verificar_antiga';
+            simStatusLock.innerHTML = '<span style="color:#3b82f6">🔐 Modo troca de senha</span>';
+            simHintLock.textContent = 'Digite a senha ATUAL e pressione ✔';
+            limparFechadura();
+        }
+
+        function cancelarTrocaFechadura(){
+            simEstadoTroca = 'off';
+            simStatusLock.innerHTML = '';
+            simHintLock.textContent = '';
+            limparFechadura();
+        }
+
+        // --- 3. OLHO MÁGICO DIGITAL ---
+        const simOlhoFora = document.getElementById('sim-olho-fora');
+        const simOlhoVisor = document.getElementById('sim-olho-visor');
+        const simOlhoOverlay = simOlhoVisor.querySelector('.sim-olho-overlay');
+        let timeoutOlho;
+
+        simOlhoFora.addEventListener('mousemove', () => {
+            simOlhoVisor.classList.add('sim-olho-ativo');
+            simOlhoOverlay.innerText = "🔴 Gravando: Movimento na rua";
+            simOlhoOverlay.style.color = "#fca5a5";
+            clearTimeout(timeoutOlho);
+            timeoutOlho = setTimeout(() => {
+                simOlhoVisor.classList.remove('sim-olho-ativo');
+                simOlhoOverlay.innerText = "Aguardando...";
+                simOlhoOverlay.style.color = "white";
+            }, 2500);
+        });
+
+    </script>
+</body>
+</html>
