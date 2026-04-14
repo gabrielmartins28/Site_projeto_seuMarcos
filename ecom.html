@@ -55,19 +55,25 @@
         header p { margin: 5px 0 0 0; color: #bdc3c7; }
         
         .produtos-grid {
-            display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-between;
+            display: flex; gap: 20px; flex-wrap: wrap; justify-content: flex-start;
         }
-        /* Ajustado de 31% para 23% para caber os 4 produtos certinhos lado a lado */
+        /* Ajustado para caber 4 por linha perfeitamente */
         .card-produto {
             background-color: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            width: 23%; min-width: 200px; padding: 20px; text-align: center; box-sizing: border-box; border: 2px solid transparent;
+            width: calc(25% - 15px); min-width: 200px; padding: 20px; text-align: center; box-sizing: border-box; border: 2px solid transparent;
             display: flex; flex-direction: column; justify-content: space-between;
         }
         .card-produto:hover { border: 2px solid #2ecc71; }
-        .preco { font-size: 1.5em; color: #27ae60; font-weight: bold; margin: 10px 0; }
+        .card-produto h3 { font-size: 1.1em; margin-top: 0; color: #2c3e50; }
+        .card-produto p { font-size: 0.9em; color: #555; }
+        .preco { font-size: 1.3em; color: #27ae60; font-weight: bold; margin: 10px 0; }
         .btn-comprar {
-            background-color: #2ecc71; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px;
+            background-color: #2ecc71; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px; font-size: 0.9em;
         }
+        .btn-comprar.btn-secundario { background-color: #34495e; }
+        .btn-comprar.btn-secundario:hover { background-color: #2c3e50; }
+
+        .categoria-titulo { width: 100%; margin-top: 30px; margin-bottom: 10px; color: #2c3e50; border-bottom: 2px solid #ccc; padding-bottom: 5px; }
 
         .agendamento {
             background-color: white; padding: 30px; margin-top: 40px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-left: 5px solid #1a252f;
@@ -178,6 +184,8 @@
         </header>
 
         <div class="container">
+            
+            <h2 class="categoria-titulo">🌐 Soluções Inteligentes (Smart Home)</h2>
             <div class="produtos-grid">
                 
                 <div class="card-produto">
@@ -198,7 +206,7 @@
                     </div>
                     <div>
                         <p class="preco">R$ 850,00</p>
-                        <button class="btn-comprar" onclick="focarNoFormulario('Instalação de Fechadura Digital', 'servico')">Comprar com Instalação</button>
+                        <button class="btn-comprar" onclick="focarNoFormulario('Instalação de Fechadura Digital', 'servico')">Agendar Instalação</button>
                     </div>
                 </div>
 
@@ -221,6 +229,55 @@
                     <div>
                         <p class="preco">R$ 150,00<span style="font-size: 0.6em">/ano</span></p>
                         <button class="btn-comprar" onclick="focarNoFormulario('Assinatura do Plano de Manutenção Anual', 'servico')">Assinar Plano</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <h2 class="categoria-titulo">🔑 Serviços Tradicionais de Chaveiro</h2>
+            <div class="produtos-grid">
+                
+                <div class="card-produto">
+                    <div>
+                        <h3>Cópia de Chaves</h3>
+                        <p>Cópias precisas na hora. Chaves simples, pantográficas e modelos especiais.</p>
+                    </div>
+                    <div>
+                        <p class="preco">A partir de R$ 15,00</p>
+                        <button class="btn-comprar btn-secundario" onclick="focarNoFormulario('Cópia de Chave', 'produto')">Pedir Cópia</button>
+                    </div>
+                </div>
+
+                <div class="card-produto">
+                    <div>
+                        <h3>Abertura de Emergência</h3>
+                        <p>Esqueceu a chave dentro de casa ou perdeu? Atendimento rápido para aberturas de portas.</p>
+                    </div>
+                    <div>
+                        <p class="preco">R$ 120,00</p>
+                        <button class="btn-comprar btn-secundario" onclick="focarNoFormulario('Serviço de Abertura de Emergência', 'servico')">Chamar Chaveiro</button>
+                    </div>
+                </div>
+
+                <div class="card-produto">
+                    <div>
+                        <h3>Cadeados Reforçados</h3>
+                        <p>Modelos de alta segurança, em latão maciço e hastes blindadas para portões e correntes.</p>
+                    </div>
+                    <div>
+                        <p class="preco">R$ 45,00</p>
+                        <button class="btn-comprar btn-secundario" onclick="focarNoFormulario('Cadeado Reforçado Alta Segurança', 'produto')">Comprar Produto</button>
+                    </div>
+                </div>
+
+                <div class="card-produto">
+                    <div>
+                        <h3>Fechadura Tetra</h3>
+                        <p>Adicione um nível extra de segurança mecânica à sua porta com a clássica fechadura tetra.</p>
+                    </div>
+                    <div>
+                        <p class="preco">R$ 200,00</p>
+                        <button class="btn-comprar btn-secundario" onclick="focarNoFormulario('Instalação de Fechadura Tetra', 'servico')">Agendar Instalação</button>
                     </div>
                 </div>
 
